@@ -8,12 +8,36 @@
   <body>
     <div class = "container-fluid">
       <div class = "row">
-        <p class = "text text-center text-primary"> CSS test </p>
+        <p class = "text text-center text-primary" id ="test"></p>
         <div class = "col-12"> 
-          <canvas id = "ep--first-canvas"></canvas>
+          <canvas id = "first-canvas"></canvas>
           </div>
       </div>
     </div>
+    <script>
+		[
+        	"first-canvas",
+          	"test",
+        ].forEach(id => {
+			const words = id.split("-");
+            if (!words.length) return;
+            let str = words.splice(0, 1)[0];
+            words.forEach(word => {
+            	str += word[0].toUpperCase() + word.slice(1);
+            });
+            window[str] = document.getElementById(id);
+        });
+        firstCanvas.width = innerWidth;
+        firstCanvas.height = innerHeight;
+        const ctx = firstCanvas.getContext("2d"); 
+        ctx.fillStyle = "rgb(245, 245, 245)";
+        
+        ctx.fillRect(0, 0, firstCanvas.width, firstCanvas.height);
+        
+        test.innerHTML = "no errors";
+
+        
+    </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
   </body>
 </html>
