@@ -68,24 +68,31 @@
                 ctx.stroke();
             }
         }
-		
+
         const lines = [];
         const obj1 = {};
         obj1.obj1 = obj1;
         obj1.obj2 = { ...obj1 };
-        test.innerHTML = obj1.obj2.obj1;
-        
+
         recursive(10, 10, obj1, 0);
+
         function recursive (x, y, obj, i) {
+        	test.innerHTML = ""+ x + "," + y + "," + obj + "," + i;
+
         	if (i > 10) return;
-        	Object.keys(obj).forEach(key, i) {
+
+        	Object.keys(obj).forEach((key, i) => {
 				const newX = x + i;
-                const newY = y + i;
+                const newY = y + 1;
+
             	const line = new Line({ x, y }, { x: newX , y: newY }, key == "obj1" ? "rgb(255, 0, 0)" : "rgb(0, 255, 0)");
+                
+                recursive(newX, newY, obj[key], i + 1);
             	lines.push(line)
-            }
+            });
         }
 
+		lines.forEach(l => l.draw);
     </script>
     <script>
     /*const points = Array.from({ length: width }).fill().map((_, x) => {
