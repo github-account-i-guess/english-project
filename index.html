@@ -1,113 +1,160 @@
 <!DOCTYPE HTML>
 <html>
-  <head>
-    <title>English Thingy</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
 
-  </head>
-  <body>
-    <div class = "container-fluid">
-      <div class = "row">
-        <p class = "text text-center text-primary" id ="test"></p>
-        <div class = "col-12"> 
-          <canvas id = "first-canvas"></canvas>
-          </div>
+<head>
+  <title>English Thingy</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+
+</head>
+
+<body>
+  <div class="container-fluid">
+    <div class="row">
+      <p class="text text-center text-primary" id="test"></p>
+      <div class="col-12">
+        <canvas id="first-canvas"></canvas>
       </div>
     </div>
-    <script>
-		[
-        	"first-canvas",
-          	"test",
-        ].forEach(id => {
-			const words = id.split("-");
-            if (!words.length) return;
-            let str = words.splice(0, 1)[0];
-            words.forEach(word => {
-            	str += word[0].toUpperCase() + word.slice(1);
-            });
-            window[str] = document.getElementById(id);
+  </div>
+  <script>
+    [
+      "first-canvas",
+      "test",
+    ].forEach(id => {
+      const words = id.split("-");
+      if (!words.length) return;
+      let str = words.splice(0, 1)[0];
+      words.forEach(word => {
+        str += word[0].toUpperCase() + word.slice(1);
+      });
+      window[str] = document.getElementById(id);
+    });
+    firstCanvas.width = innerWidth;
+    firstCanvas.height = innerHeight;
+    const ctx = firstCanvas.getContext("2d");
+    ctx.fillStyle = "rgb(255, 255, 255)";
+
+    ctx.fillRect(0, 0, firstCanvas.width, firstCanvas.height);
+
+    const { width, height } = firstCanvas;
+
+    const canvasData = ctx.getImageData(0, 0, width, height);
+    const { data } = canvasData
+
+
+    class Point {
+      constructor(x, y, color) {
+        Object.assign(this, { x, y, color });
+      }
+
+      draw() {
+        const dataPos = 4 * (this.x + this.y * width);
+        Array.from({ length: 3 }).fill().forEach((_, i) => {
+          data[dataPos + i] = this.color[i];
         });
-        firstCanvas.width = innerWidth;
-        firstCanvas.height = innerHeight;
-        const ctx = firstCanvas.getContext("2d"); 
-        ctx.fillStyle = "rgb(245, 245, 245)";
-        
-        ctx.fillRect(0, 0, firstCanvas.width, firstCanvas.height);
 
-		const { width, height } = firstCanvas;
+      }
 
-       	const canvasData = ctx.getImageData(0, 0, width, height);
-		const { data } = canvasData
+    }
 
+    class Line {
+      constructor(point1, point2, color) {
+        Object.assign(this, { point1, point2, color });
+      }
+      
+      draw() {
+        ctx.beginPath();
+        ctx.moveTo(this.point1.x, this.point1.y);
+        ctx.lineTo(this.point2.x, this.point2.y);
+        ctx.strokeStyle = this.color;
+        ctx.closePath();
+        ctx.stroke();
+      }
+    }
 
-        class Point {
-        	constructor (x, y, color) {
-            	Object.assign(this, { x, y, color });
-            }
-            
-           draw () {
-                const dataPos = 4 * (this.x + this.y * width);
-                Array.from({ length: 3 }).fill().forEach((_, i) => {
-					data[dataPos + i] = this.color;
-               	});
+    const lines = [];
+    const obj0 = { angle: 0 };
+    obj0.obj0 = obj0;
+    Array.from({ length: 2 }).fill().forEach((_, i) => {
 
-			}
+      obj0["obj" + (i + 1)] = { ...obj0, angle: - (i + 1) * Math.PI/2 };
+    });
 
-        }
+    recursive(width/2, height/2, obj0, 0);
 
-		class Line {
-        	constructor (point1, point2, color) { 
-           		Object.assign(this, { point1, point2, color });
-            }
-            draw () {
-            	ctx.beginPath();
-                ctx.moveTo(point1.x, point1.y);
-                ctx.lineTo(point2.x, point2.y);
-                ctx.strokeStyle = this.color;
-                ctx.closePath();
-                ctx.stroke();
-            }
-        }
+    function recursive(x, y, obj, i) {
+      test.innerHTML = i;
+      if (i > 15) return;
 
-        const lines = [];
-        const obj1 = {};
-        obj1.obj1 = obj1;
-        obj1.obj2 = { ...obj1 };
+      Object.keys(obj).forEach((key, j) => {
+        const value = obj[key];
+        const newX = x + 200 / 2 ** i * Math.cos(value.angle) ;
+        const newY = y + 200 / 2 ** i * Math.sin(value.angle);
+        if (isNaN(newX) || isNaN(newY)) return;
+        // console.log(newY);
+        const line = new Line({ x, y }, { x: newX, y: newY }, "rgb(0, 0, 0)");//key == "obj1" ? "rgb(0, 0, 0)" : "rgb(0, 0, 0)");
+    
+        setTimeout(() => { 
+          recursive(newX, newY, value, i + 1);
+          lines.forEach(l => l.draw());
+        });
+        lines.push(line)
+      });
+      console.log(i + " finished")
+    }
 
-        recursive(10, 10, obj1, 0);
+    const mouse = { x: 0, y: 0 };
+    addEventListener("mousemove", (e) => {
+      mouse.x = e.pageX;
+      mouse.y = e.pageY;
+    });
 
-        function recursive (x, y, obj, i) {
-        	test.innerHTML = ""+ x + "," + y + "," + obj + "," + i;
+    addEventListener("keypress", (e) => {
+      const { pageX, pageY, which } = e;
+      // which = 1 when left, which = 3 when right
+      lines.forEach(line => {
+        [line.point1, line.point2]. forEach(point => {
+          const { x: oldX, y: oldY } = point;
+          point.x = (oldX - mouse.x) * 0.5 + mouse.x;
+          point.y = (oldY - mouse.y) * 0.5 + mouse.y;
+        });
+      });
+      ctx.clearRect(0, 0, width, height);
+      lines.forEach(l => l.draw());
+    })
+    addEventListener("click", function (e) {
+      const { pageX, pageY, which } = e;
+      // which = 1 when left, which = 3 when right
+      lines.forEach(line => {
+        [line.point1, line.point2]. forEach(point => {
+          const { x: oldX, y: oldY } = point;
+          point.x = (oldX - pageX) * 2 + pageX;
+          point.y = (oldY - pageY) * 2 + pageY;
+        });
+      });
+      ctx.clearRect(0, 0, width, height);
+      lines.forEach(l => l.draw());
 
-        	if (i > 10) return;
-
-        	Object.keys(obj).forEach((key, i) => {
-				const newX = x + i;
-                const newY = y + 1;
-
-            	const line = new Line({ x, y }, { x: newX , y: newY }, key == "obj1" ? "rgb(255, 0, 0)" : "rgb(0, 255, 0)");
-                
-                recursive(newX, newY, obj[key], i + 1);
-            	lines.push(line)
-            });
-        }
-
-		lines.forEach(l => l.draw);
-    </script>
-    <script>
+    });
+  </script>
+  <script>
     /*const points = Array.from({ length: width }).fill().map((_, x) => {
-        	return Array.from({ length: height }).fill().map ((_, y) => {
-            	const color = Math.random() < 0.5 ? 255 : 0;
-            	return new Point (x, y, color);
-			});
-		});
+          return Array.from({ length: height }).fill().map ((_, y) => {
+              const color = Math.random() < 0.5 ? 255 : 0;
+              return new Point (x, y, color);
+      });
+    });
         setInterval(() => {
-        	//points.forEach(row => row.forEach(p => p.draw()));
-			ctx.putImageData(canvasData, 0, 0);
-           	test.innerHTML = Date.now();
+          //points.forEach(row => row.forEach(p => p.draw()));
+      ctx.putImageData(canvasData, 0, 0);
+              test.innerHTML = Date.now();
 
         }, 100);*/
-    </script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
-  </body>
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN"
+    crossorigin="anonymous"></script>
+</body>
+
 </html>
