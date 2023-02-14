@@ -72,20 +72,26 @@
         ctx.stroke();
       }
     }
-
+    const length = 3;
     const lines = [];
-    const obj0 = { angle: 0 };
+    const obj0 = { angle: - (length + 1) * 1 * Math.PI/4 };
     obj0.obj0 = obj0;
-    Array.from({ length: 2 }).fill().forEach((_, i) => {
+    Array.from({ length: length - 1 }).fill().forEach((_, i) => {
 
-      obj0["obj" + (i + 1)] = { ...obj0, angle: - (i + 1) * Math.PI/2 };
+      obj0["obj" + (i + 1)] = { ...obj0, angle: - (i + 1) * 1 * Math.PI/4 };
     });
+    let current = 0;
 
     recursive(width/2, height/2, obj0, 0);
-
     function recursive(x, y, obj, i) {
-      test.innerHTML = i;
-      if (i > 15) return;
+      if (current < i) {
+        const arr = [...lines];
+        test.innerHTML = current;
+        console.log(current + " finished")
+        current = i;
+
+      }
+      if (i > 9) return;
 
       Object.keys(obj).forEach((key, j) => {
         const value = obj[key];
@@ -93,15 +99,14 @@
         const newY = y + 200 / 2 ** i * Math.sin(value.angle);
         if (isNaN(newX) || isNaN(newY)) return;
         // console.log(newY);
-        const line = new Line({ x, y }, { x: newX, y: newY }, "rgb(0, 0, 0)");//key == "obj1" ? "rgb(0, 0, 0)" : "rgb(0, 0, 0)");
-    
+        const line = new Line({ x, y }, { x: newX, y: newY }, "rgb(0, 0, 0)");//["rgba(255, 0, 0)", "rgb(0, 255, 0)", "rgb(0, 0, 255)"][key.slice(3)]);
+        lines.forEach(l => l.draw());
+
         setTimeout(() => { 
           recursive(newX, newY, value, i + 1);
-          lines.forEach(l => l.draw());
-        });
+        }, 0);
         lines.push(line)
       });
-      console.log(i + " finished")
     }
 
     const mouse = { x: 0, y: 0 };
