@@ -150,6 +150,7 @@
     const presets = [
     	new Preset(3, Math.PI/2, "Preset 1"),
     	new Preset(2, Math.PI/4, "Preset 2"),
+      	new Preset(3, Math.PI/4, "Preset 2"),
 	];
 
    	let currentPreset = presets[0];
@@ -168,10 +169,12 @@
       mouse.y = e.pageY;
     });
 
-    canvas.addEventListener("keypress", (e) => {
-      const { pageX, pageY, which } = e;
+    addEventListener("keypress", (e) => {
+      let { pageX, pageY } = e;
+      const { top, left } = firstCanvas.getBoundingClientRect();
+      pageX -= left;
+      pageY -= top;
       // which = 1 when left, which = 3 when right
-
 	  currentPreset.lines.forEach(line => {
         [line.point1, line.point2]. forEach(point => {
           const { x: oldX, y: oldY } = point;
@@ -180,8 +183,12 @@
         });
       });
     })
-    canvas.addEventListener("click", function (e) {
-      const { pageX, pageY, which } = e;
+    firstCanvas.addEventListener("click", function (e) {
+      let { pageX, pageY, which } = e;
+      const { top, left } = firstCanvas.getBoundingClientRect();
+      pageX -= left;
+      pageY -= top;
+
       // which = 1 when left, which = 3 when right
       currentPreset.lines.forEach(line => {
         [line.point1, line.point2]. forEach(point => {
