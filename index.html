@@ -105,7 +105,7 @@
             obj0["obj" + (i + 1)] = { ...obj0, angle: this.getAngle(i) };
           });
 
-          this.recursive(width/2, height/2, obj0, 0);
+          this.recursive(width/2, 3 * height/4, obj0, 0);
 
       	}
       	recursive(x, y, obj, i) {
@@ -148,9 +148,10 @@
     }
     
     const presets = [
-    	new Preset(3, Math.PI/2, "Preset 1"),
-    	new Preset(2, Math.PI/4, "Preset 2"),
-      	new Preset(3, Math.PI/4, "Preset 2"),
+    	new Preset(3, Math.PI/2, "Houses?"),
+    	new Preset(2, Math.PI/4, "Small Tree"),
+      	new Preset(3, Math.PI/4, "3d"),
+      	new Preset(3, Math.PI/6, "Tree"),
 	];
 
    	let currentPreset = presets[0];
