@@ -12,11 +12,7 @@
   <div class="container-fluid">
   	<div class = "row p-3"> 
     	<div class = "btn-group" id = "buttons"> 
-        	<button type = "button" class = "btn btn-primary">Preset 1</button>
-          	<button type = "button" class = "btn btn-warning">Preset 2</button>
-        	<button type = "button" class = "btn btn-danger">Preset 3</button>
-        	<button type = "button" class = "btn btn-success">Preset 4</button>
-
+        
         </div>
     </div>
     <div class="row">
@@ -86,12 +82,13 @@
     //populateCanvas(3, Math.PI/2);
 
 	class Preset {
-      	constructor (length, angleOffset) {
+      	constructor (length, angleOffset, name) {
        		this.length = length;
           	this.angleOffset = angleOffset;
            	this.lines = [];
             this.current = 0;
             this.populate();
+            this.name = name;
        	}
         
         getAngle(i) {
@@ -136,11 +133,24 @@
             }, 0);
           });
         }
+        
+        createButton() {
+        	const btn = document.createElement("button");
+            btn.classList.add("btn", "btn-primary");
+            btn.innerHTML = this.name;
+            btn.addEventListener("click", () => {
+            	currentPreset = this;
+            });
+            
+            this.btn = btn;
+            return btn;
+		}
     }
     
     const presets = [
-    	new Preset(3, Math.PI/2),
-    ];
+    	new Preset(3, Math.PI/2, "Preset 1"),
+    	new Preset(2, Math.PI/4, "Preset 2"),
+	];
 
    	let currentPreset = presets[0];
     setInterval(() => {
@@ -148,7 +158,9 @@
       	currentPreset.lines.forEach(l => l.draw());
     }, 100);
     
-    Array.from(buttons.childNodes).forEach(() => {});
+    presets.forEach((preset, i) => {
+    	buttons.appendChild(preset.createButton());
+    });
 
     const mouse = { x: 0, y: 0 };
     addEventListener("mousemove", (e) => {
@@ -156,7 +168,7 @@
       mouse.y = e.pageY;
     });
 
-    addEventListener("keypress", (e) => {
+    canvas.addEventListener("keypress", (e) => {
       const { pageX, pageY, which } = e;
       // which = 1 when left, which = 3 when right
 
@@ -168,7 +180,7 @@
         });
       });
     })
-    addEventListener("click", function (e) {
+    canvas.addEventListener("click", function (e) {
       const { pageX, pageY, which } = e;
       // which = 1 when left, which = 3 when right
       currentPreset.lines.forEach(line => {
