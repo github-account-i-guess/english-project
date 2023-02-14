@@ -72,40 +72,55 @@
         ctx.stroke();
       }
     }
-    const length = 3;
-    const lines = [];
-    const obj0 = { angle: - (length + 1) * 1 * Math.PI/4 };
-    obj0.obj0 = obj0;
-    Array.from({ length: length - 1 }).fill().forEach((_, i) => {
+    let lines, current;
+    function populateCanvas(length, angleOffset) {
+    	function getAngle(i) {
+          return - (i + 1) * angleOffset;//1 * Math.PI/2
+        }
 
-      obj0["obj" + (i + 1)] = { ...obj0, angle: - (i + 1) * 1 * Math.PI/4 };
-    });
-    let current = 0;
 
-    recursive(width/2, height/2, obj0, 0);
+        //const length = 3;
+        lines = [];
+
+        const obj0 = { angle: getAngle(length) };
+        obj0.obj0 = obj0;
+        Array.from({ length: length - 1 }).fill().forEach((_, i) => {
+
+          obj0["obj" + (i + 1)] = { ...obj0, angle: getAngle(i) };
+        });
+        current = 0;
+
+        recursive(width/2, height/2, obj0, 0);
+
+    }
+    
+    populateCanvas(3, Math.PI/2);
+    
     function recursive(x, y, obj, i) {
       if (current < i) {
         const arr = [...lines];
         test.innerHTML = current;
         console.log(current + " finished")
-        current = i;
+       	current = i;
 
       }
       if (i > 9) return;
 
       Object.keys(obj).forEach((key, j) => {
         const value = obj[key];
-        const newX = x + 200 / 2 ** i * Math.cos(value.angle) ;
-        const newY = y + 200 / 2 ** i * Math.sin(value.angle);
+        const newX = x + width/4 / 2 ** i * Math.cos(value.angle) ;
+        const newY = y + width/4 / 2 ** i * Math.sin(value.angle);
         if (isNaN(newX) || isNaN(newY)) return;
         // console.log(newY);
+        
         const line = new Line({ x, y }, { x: newX, y: newY }, "rgb(0, 0, 0)");//["rgba(255, 0, 0)", "rgb(0, 255, 0)", "rgb(0, 0, 255)"][key.slice(3)]);
-        lines.forEach(l => l.draw());
+        lines.push(line);
+
+		lines.forEach(l => l.draw());
 
         setTimeout(() => { 
           recursive(newX, newY, value, i + 1);
         }, 0);
-        lines.push(line)
       });
     }
 
@@ -154,7 +169,6 @@
           //points.forEach(row => row.forEach(p => p.draw()));
       ctx.putImageData(canvasData, 0, 0);
               test.innerHTML = Date.now();
-
         }, 100);*/
   </script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"
