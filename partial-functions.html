@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+<p id = "command-line"></p>
+
+
+<script>
+	const commandLine = document.querySelector("#command-line");
+    
+    const addToCommandLine = string => commandLine.innerHTML += string + "<br>";
+   	const log = (...strings) => strings.forEach(addToCommandLine);
+   	//log("a");
+	//log("b");
+    
+    class PartialFunction {
+    	constructor (func, ...params) {
+        	this.func = func;
+            this.params = params;
+        }
+        
+        addParams (...params) {
+        	this.params.push(...params);
+        }
+        
+        addParamsAndClone (params) {
+        	const { clone } = this;
+            clone.addParams(params);
+            return clone;
+        }
+        
+        get clone () {
+        	return new PartialFunction(this.func, this.params);
+        }
+        
+        run(...params) {
+        	this.addParams (...params);
+            return this.func (...this.params);
+        }
+    }
+    
+   	const thing1 = new PartialFunction(log, "1");
+
+	const thing12 = thing1.addParamsAndClone("2");
+  	thing12.run("3");
+   	//log(thing1.params);
+  	// thing1.run(thing1.params);
+    
+</script>
+
+
+</body>
+</html>
